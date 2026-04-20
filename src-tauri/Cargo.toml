@@ -1,0 +1,30 @@
+[package]
+name = "rustmark"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "rustmark_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+tauri-plugin-shell = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+zip = { version = "2", default-features = false, features = ["deflate"] }
+# Chromium-based PDF rendering. `fetch` enables auto-downloading a pinned
+# Chromium build when no system Chrome is present — so open-source users
+# don't need a pre-installed browser to get deterministic PDF output.
+headless_chrome = { version = "1", features = ["fetch"] }
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true

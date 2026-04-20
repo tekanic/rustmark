@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rustmark</title>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <div id="app">
+
+    <!-- Toolbar -->
+    <header id="toolbar">
+
+      <!-- File operations -->
+      <div class="toolbar-group">
+        <button id="btn-new" class="tb-btn" title="New file (Ctrl+N)">
+          <svg viewBox="0 0 16 16"><path d="M9.5 1H3a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V5.5L9.5 1zM9 2l3 3H9V2zM3 14V2h5v4h4v8H3z"/></svg>
+          New
+        </button>
+        <button id="btn-open" class="tb-btn" title="Open file (Ctrl+O)">
+          <svg viewBox="0 0 16 16"><path d="M1 3.5A1.5 1.5 0 0 1 2.5 2h2.764c.958 0 1.76.56 2.311 1.184C7.985 3.648 8.48 4 9 4h4.5A1.5 1.5 0 0 1 15 5.5v7a1.5 1.5 0 0 1-1.5 1.5h-11A1.5 1.5 0 0 1 1 12.5v-9z"/></svg>
+          Open
+        </button>
+        <div class="toolbar-sep"></div>
+        <button id="btn-save" class="tb-btn" title="Save (Ctrl+S)">
+          <svg viewBox="0 0 16 16"><path d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4.5L10.5 1H2zm0 1h8v3.5a.5.5 0 0 0 .5.5H14V14H2V2zm3 8a2 2 0 1 0 4 0 2 2 0 0 0-4 0zm1 0a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM4 3h5v2H4V3z"/></svg>
+          Save
+        </button>
+        <button id="btn-save-as" class="tb-btn" title="Save As (Ctrl+Shift+S)">
+          <svg viewBox="0 0 16 16"><path d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4.5L10.5 1H2zm0 1h8v3.5a.5.5 0 0 0 .5.5H14V14H2V2zm3 8a2 2 0 1 0 4 0 2 2 0 0 0-4 0zm1 0a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM4 3h5v2H4V3z"/><path d="M12.5 0H14v2h-1.5V0zm0 3H14v2h-1.5V3z" fill="var(--accent)"/></svg>
+          Save As
+        </button>
+        <button id="btn-rename" class="tb-btn tb-btn-ghost" title="Rename file (F9)">
+          <svg viewBox="0 0 16 16"><path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/></svg>
+          Rename
+        </button>
+      </div>
+
+      <!-- Centered file name -->
+      <div id="file-title">
+        <span id="file-name">untitled.md</span><span id="modified-dot" class="hidden"> ●</span>
+      </div>
+
+      <!-- Edit + View controls -->
+      <div class="toolbar-group toolbar-group-right">
+        <button id="btn-undo" class="tb-btn tb-btn-icon" title="Undo (Ctrl+Z)">
+          <svg viewBox="0 0 16 16"><path d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2v1z"/><path d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466z"/></svg>
+        </button>
+        <button id="btn-redo" class="tb-btn tb-btn-icon" title="Redo (Ctrl+Shift+Z)">
+          <svg viewBox="0 0 16 16"><path d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966a.25.25 0 0 1 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/></svg>
+        </button>
+        <div class="toolbar-sep"></div>
+        <button id="btn-doc-settings" class="tb-btn tb-btn-ghost" title="Document Settings (Ctrl+Shift+D)">
+          <svg viewBox="0 0 16 16"><path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492zM5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0z"/><path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52l-.094-.319zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.474l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115l.094-.319z"/></svg>
+          Settings
+        </button>
+        <button id="btn-export" class="tb-btn tb-btn-ghost" title="Export document (Ctrl+Shift+E)">
+          <svg viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/></svg>
+          Export
+        </button>
+        <button id="btn-find" class="tb-btn tb-btn-ghost" title="Find / Replace (Ctrl+F)">
+          <svg viewBox="0 0 16 16"><path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/></svg>
+          Find
+        </button>
+        <button id="btn-goto" class="tb-btn tb-btn-ghost" title="Go to Line (Ctrl+G)">
+          <svg viewBox="0 0 16 16"><path d="M1 2.5A1.5 1.5 0 0 1 2.5 1h3A1.5 1.5 0 0 1 7 2.5v3A1.5 1.5 0 0 1 5.5 7h-3A1.5 1.5 0 0 1 1 5.5v-3zM2.5 2a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zm6.5.5A1.5 1.5 0 0 1 10.5 1h3A1.5 1.5 0 0 1 15 2.5v3A1.5 1.5 0 0 1 13.5 7h-3A1.5 1.5 0 0 1 9 5.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3zM1 10.5A1.5 1.5 0 0 1 2.5 9h3A1.5 1.5 0 0 1 7 10.5v3A1.5 1.5 0 0 1 5.5 15h-3A1.5 1.5 0 0 1 1 13.5v-3zm1.5-.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5h-3z"/></svg>
+          Go to
+        </button>
+        <div class="toolbar-sep"></div>
+        <label class="tb-toggle" title="Toggle preview (Ctrl+\\)">
+          <input type="checkbox" id="toggle-preview" checked />
+          <span>Preview</span>
+        </label>
+        <label class="tb-toggle" title="Sync scroll">
+          <input type="checkbox" id="toggle-sync" checked />
+          <span>Sync</span>
+        </label>
+        <div class="toolbar-sep"></div>
+        <button id="btn-ref" class="tb-btn tb-btn-icon tb-btn-ghost" title="Markdown Reference (F1)">
+          <svg viewBox="0 0 16 16"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Formatting toolbar -->
+    <div id="toolbar-format">
+      <!-- Inline formatting -->
+      <button id="fmt-bold"   class="tb-fmt" title="Bold (Ctrl+B)"><b>B</b></button>
+      <button id="fmt-italic" class="tb-fmt" title="Italic (Ctrl+I)"><i>I</i></button>
+      <button id="fmt-strike" class="tb-fmt" title="Strikethrough"><s>S</s></button>
+      <button id="fmt-code"   class="tb-fmt" title="Inline code">
+        <svg viewBox="0 0 16 16"><path d="M5.854 4.854a.5.5 0 1 0-.708-.708l-3.5 3.5a.5.5 0 0 0 0 .708l3.5 3.5a.5.5 0 0 0 .708-.708L2.707 8l3.147-3.146zm4.292 0a.5.5 0 0 1 .708-.708l3.5 3.5a.5.5 0 0 1 0 .708l-3.5 3.5a.5.5 0 0 1-.708-.708L13.293 8l-3.147-3.146z"/></svg>
+      </button>
+      <button id="fmt-link" class="tb-fmt" title="Insert link">
+        <svg viewBox="0 0 16 16"><path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z"/><path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z"/></svg>
+      </button>
+
+      <div class="tfmt-sep"></div>
+
+      <!-- Headings -->
+      <button id="fmt-h1" class="tb-fmt tb-fmt-text" title="Heading 1 (Ctrl+1)">H1</button>
+      <button id="fmt-h2" class="tb-fmt tb-fmt-text" title="Heading 2 (Ctrl+2)">H2</button>
+      <button id="fmt-h3" class="tb-fmt tb-fmt-text" title="Heading 3 (Ctrl+3)">H3</button>
+      <button id="fmt-h4" class="tb-fmt tb-fmt-text" title="Heading 4 (Ctrl+4)">H4</button>
+
+      <div class="tfmt-sep"></div>
+
+      <button id="fmt-table" class="tb-fmt" title="Table Creator (Ctrl+T)">
+        <svg viewBox="0 0 16 16"><path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm15 2h-4v3h4V4zm0 4h-4v3h4V8zm0 4h-4v3h3a1 1 0 0 0 1-1v-2zm-5 3v-3H6v3h4zm-5 0v-3H1v2a1 1 0 0 0 1 1h3zm-4-4h4V8H1v3zm0-4h4V4H1v3zm5-3v3h4V4H6zm4 4H6v3h4V8z"/></svg>
+      </button>
+
+      <div class="tfmt-sep"></div>
+
+      <!-- Block formatting -->
+      <button id="fmt-ul" class="tb-fmt" title="Unordered list">
+        <svg viewBox="0 0 16 16"><path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM2 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm0 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/></svg>
+      </button>
+      <button id="fmt-ol" class="tb-fmt" title="Ordered list">
+        <svg viewBox="0 0 16 16"><path fill-rule="evenodd" d="M5 11.5a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zM1.713 11.865v-.474H2c.217 0 .363-.137.363-.317 0-.185-.158-.31-.361-.31-.223 0-.367.152-.373.31h-.59c.016-.467.373-.787.986-.787.588 0 .954.291.957.703a.595.595 0 0 1-.492.594v.033a.615.615 0 0 1 .569.631c.003.533-.502.8-1.051.8-.656 0-1-.37-1.008-.794h.582c.008.178.186.306.422.309.254 0 .424-.145.422-.35-.002-.195-.155-.348-.414-.348h-.3zm-.004-4.699h-.604v-.035c0-.408.295-.844.958-.844.583 0 .96.326.96.756 0 .389-.257.617-.476.848l-.537.572v.03h1.054V9H1.143v-.395l.957-.99c.138-.142.293-.304.293-.508 0-.18-.147-.32-.342-.32a.33.33 0 0 0-.342.338v.041zM2.564 5h-.635V2.924h-.031l-.598.42v-.567l.629-.443h.635V5z"/></svg>
+      </button>
+      <button id="fmt-quote" class="tb-fmt" title="Blockquote">
+        <svg viewBox="0 0 16 16"><path d="M12 12a1 1 0 0 0 1-1V8.558a1 1 0 0 0-1-1h-1.388c0-.351.021-.703.062-1.054.062-.372.166-.703.31-.992.145-.29.331-.517.559-.683.227-.186.516-.279.868-.279V3c-.579 0-1.085.124-1.52.372a3.322 3.322 0 0 0-1.085.992 4.92 4.92 0 0 0-.62 1.458A7.712 7.712 0 0 0 9 7.558V11a1 1 0 0 0 1 1h2Zm-6 0a1 1 0 0 0 1-1V8.558a1 1 0 0 0-1-1H4.612c0-.351.021-.703.062-1.054.062-.372.166-.703.31-.992.145-.29.331-.517.559-.683.227-.186.516-.279.868-.279V3c-.579 0-1.085.124-1.52.372a3.322 3.322 0 0 0-1.085.992 4.92 4.92 0 0 0-.62 1.458A7.712 7.712 0 0 0 3 7.558V11a1 1 0 0 0 1 1h2Z"/></svg>
+      </button>
+      <button id="fmt-codeblock" class="tb-fmt" title="Code block">
+        <svg viewBox="0 0 16 16"><path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z"/><path d="M6.854 4.646a.5.5 0 0 1 0 .708L4.207 8l2.647 2.646a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 0 1 .708 0zm2.292 0a.5.5 0 0 0 0 .708L11.793 8l-2.647 2.646a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708 0z"/></svg>
+      </button>
+      <button id="fmt-hr" class="tb-fmt" title="Horizontal rule">
+        <svg viewBox="0 0 16 16"><path d="M12 8a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1 0-1h11a.5.5 0 0 1 .5.5zm0-4a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1 0-1h11a.5.5 0 0 1 .5.5zm0 8a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1 0-1h11a.5.5 0 0 1 .5.5z"/></svg>
+      </button>
+
+      <div class="tfmt-sep"></div>
+
+      <!-- Alignment -->
+      <button id="fmt-align-left" class="tb-fmt" title="Align left">
+        <svg viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2 12.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm0-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg>
+      </button>
+      <button id="fmt-align-center" class="tb-fmt" title="Align center">
+        <svg viewBox="0 0 16 16"><path fill-rule="evenodd" d="M4 12.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg>
+      </button>
+      <button id="fmt-align-right" class="tb-fmt" title="Align right">
+        <svg viewBox="0 0 16 16"><path fill-rule="evenodd" d="M6 12.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-4-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5zm4-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-4-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5z"/></svg>
+      </button>
+    </div>
+
+    <!-- Main split pane -->
+    <main id="main">
+      <div id="editor-pane">
+        <div id="editor-wrap"></div>
+      </div>
+      <div id="gutter" title="Drag to resize panes"></div>
+      <div id="preview-pane">
+        <div id="preview-scroll">
+          <div id="preview-body" class="preview-paged"></div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Go to Line bar -->
+    <div id="goto-bar" class="hidden">
+      <label for="goto-input">Go to line</label>
+      <input type="number" id="goto-input" min="1" placeholder="Line number…" />
+      <button id="goto-submit">Go</button>
+      <button id="goto-close" title="Close (Escape)">✕</button>
+    </div>
+
+    <!-- Status bar -->
+    <footer id="statusbar">
+      <div class="status-left">
+        <span id="st-cursor">Ln 1, Col 1</span>
+        <span class="st-sep">│</span>
+        <span id="st-words">0 words</span>
+        <span class="st-sep">│</span>
+        <span id="st-lines">0 lines</span>
+      </div>
+      <div id="st-lint" class="status-center"></div>
+      <div class="status-right">
+        <span>Markdown · UTF-8</span>
+      </div>
+    </footer>
+
+    <!-- Lint detail popup -->
+    <div id="lint-detail" class="hidden">
+      <div id="lint-detail-header">
+        <span id="lint-detail-badge"></span>
+        <span id="lint-detail-loc"></span>
+        <button id="lint-detail-close" title="Close">✕</button>
+      </div>
+      <div id="lint-detail-msg"></div>
+      <pre id="lint-detail-ctx"></pre>
+      <div id="lint-detail-actions">
+        <button id="lint-detail-fix" class="hidden"></button>
+      </div>
+    </div>
+
+    <!-- Lint panel -->
+    <div id="lint-panel" class="hidden">
+      <div id="lint-panel-header">
+        <span>Problems</span>
+        <button id="lint-panel-close">✕</button>
+      </div>
+      <div id="lint-panel-list"></div>
+    </div>
+
+    <!-- Export modal -->
+    <div id="export-modal" class="hidden" role="dialog" aria-modal="true" aria-label="Export">
+      <div id="export-modal-inner">
+        <div id="export-modal-header">
+          <span>Export Document</span>
+          <button id="export-modal-close" title="Close (Escape)">✕</button>
+        </div>
+        <div id="export-modal-body">
+
+          <div class="export-option" id="export-opt-chromium">
+            <div class="export-option-icon">📘</div>
+            <div class="export-option-info">
+              <div class="export-option-title">PDF (Chrome) <span class="export-badge" id="chrome-badge">Checking…</span></div>
+              <div class="export-option-desc">Deterministic paginated PDF rendered by a headless Chromium (Chrome, Edge, Brave, Arc, Vivaldi). Recommended for best pagination fidelity.</div>
+            </div>
+            <button class="export-btn" id="export-do-pdf-chromium">Export PDF</button>
+          </div>
+
+          <div class="export-option" id="export-opt-print">
+            <div class="export-option-icon">🖨️</div>
+            <div class="export-option-info">
+              <div class="export-option-title">PDF (Print Dialog) <span class="export-badge export-badge-ok">No dependencies</span></div>
+              <div class="export-option-desc">Opens the system print dialog. Choose "Save as PDF" to export. May produce blank pages between content on some systems.</div>
+            </div>
+            <button class="export-btn" id="export-do-print">Export PDF</button>
+          </div>
+
+          <div class="export-option" id="export-opt-docx">
+            <div class="export-option-icon">📄</div>
+            <div class="export-option-info">
+              <div class="export-option-title">DOCX <span class="export-badge" id="pandoc-badge">Checking…</span></div>
+              <div class="export-option-desc">Exports a Word document via Pandoc. Uses your system Pandoc if installed, otherwise auto-downloads Pandoc on first use. Preserves headings, tables, code blocks, footnotes, and reads YAML front matter for document metadata.</div>
+            </div>
+            <button class="export-btn" id="export-do-docx">Export DOCX</button>
+          </div>
+
+          <div class="export-option" id="export-opt-pdf-pandoc">
+            <div class="export-option-icon">📑</div>
+            <div class="export-option-info">
+              <div class="export-option-title">PDF via Pandoc <span class="export-badge" id="latex-badge">Checking…</span></div>
+              <div class="export-option-desc">High-quality PDF via Pandoc + a LaTeX engine. Uses your system LaTeX if installed, otherwise auto-downloads Tectonic (a self-contained modern LaTeX engine) on first use.</div>
+            </div>
+            <button class="export-btn" id="export-do-pdf-pandoc">Export PDF</button>
+          </div>
+
+        </div>
+        <div id="export-status" class="hidden"></div>
+      </div>
+    </div>
+
+    <!-- Document Settings panel -->
+    <div id="doc-settings" class="hidden" role="dialog" aria-modal="true" aria-label="Document Settings">
+      <div id="doc-settings-inner">
+        <div id="doc-settings-header">
+          <span>Document Settings</span>
+          <button id="doc-settings-close" title="Close (Escape)">✕</button>
+        </div>
+        <div id="doc-settings-body">
+
+          <section class="ds-section">
+            <h3 class="ds-section-title">Metadata</h3>
+            <label class="ds-label" for="ds-title">Title</label>
+            <input class="ds-input" id="ds-title" type="text" placeholder="Document title" />
+            <label class="ds-label" for="ds-author">Author</label>
+            <input class="ds-input" id="ds-author" type="text" placeholder="Author name" />
+            <label class="ds-label" for="ds-date">Date</label>
+            <input class="ds-input" id="ds-date" type="text" placeholder="e.g. 2026-04-18 or today" />
+          </section>
+
+          <section class="ds-section">
+            <h3 class="ds-section-title">Layout</h3>
+            <div class="ds-row">
+              <label class="ds-check-label">
+                <input type="checkbox" id="ds-titlepage" />
+                <span>Title page</span>
+              </label>
+              <label class="ds-check-label">
+                <input type="checkbox" id="ds-toc" />
+                <span>Table of contents</span>
+              </label>
+            </div>
+            <label class="ds-label" for="ds-toc-depth">TOC depth</label>
+            <select class="ds-select" id="ds-toc-depth">
+              <option value="1">1 — top-level only</option>
+              <option value="2" selected>2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6 — all headings</option>
+            </select>
+          </section>
+
+          <section class="ds-section">
+            <h3 class="ds-section-title">Theme</h3>
+            <label class="ds-label" for="ds-theme">Page style</label>
+            <select class="ds-select" id="ds-theme">
+              <option value="classic" selected>Classic — serif, printable</option>
+              <option value="modern">Modern — clean sans</option>
+              <option value="academic">Academic — Times-like, justified</option>
+              <option value="minimal">Minimal — narrow, airy</option>
+            </select>
+          </section>
+
+          <section class="ds-section">
+            <h3 class="ds-section-title">Page Numbering</h3>
+            <div class="ds-row">
+              <label class="ds-check-label">
+                <input type="checkbox" id="ds-pagenumbers" />
+                <span>Enable page numbers</span>
+              </label>
+            </div>
+          </section>
+
+          <section class="ds-section">
+            <h3 class="ds-section-title">Header &amp; Footer</h3>
+            <label class="ds-label" for="ds-header">Header text</label>
+            <input class="ds-input" id="ds-header" type="text" placeholder="e.g. My Report" />
+            <label class="ds-label" for="ds-footer">Footer text</label>
+            <input class="ds-input" id="ds-footer" type="text" placeholder="e.g. Confidential" />
+          </section>
+
+        </div>
+        <div id="doc-settings-footer">
+          <button id="doc-settings-apply" class="ds-apply-btn">Apply to Document</button>
+          <span id="doc-settings-status" class="hidden"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Table Creator modal -->
+    <div id="table-creator" class="hidden" role="dialog" aria-modal="true" aria-label="Table Creator">
+      <div id="table-creator-inner">
+        <div id="table-creator-header">
+          <span>Table Creator</span>
+          <button id="table-creator-close" title="Close (Escape)">✕</button>
+        </div>
+        <div id="table-creator-body">
+          <div id="tc-controls">
+            <label class="tc-control-label">
+              Rows
+              <input type="number" id="tc-rows" min="1" max="20" value="3" />
+            </label>
+            <label class="tc-control-label">
+              Columns
+              <input type="number" id="tc-cols" min="1" max="10" value="3" />
+            </label>
+            <span class="tc-hint">Click a cell to edit · Tab to move · ⬅⬛➡ to set column alignment</span>
+          </div>
+          <div id="tc-grid-wrap">
+            <div id="tc-grid"></div>
+          </div>
+          <div id="tc-preview-wrap">
+            <div class="tc-preview-label">Markdown</div>
+            <pre id="tc-preview"></pre>
+          </div>
+        </div>
+        <div id="table-creator-footer">
+          <button id="tc-insert">Insert Table</button>
+          <button id="tc-cancel">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Markdown Reference panel -->
+    <div id="md-ref" class="hidden" role="dialog" aria-modal="true" aria-label="Markdown Reference">
+      <div id="md-ref-inner">
+        <div id="md-ref-header">
+          <span>Markdown Reference</span>
+          <button id="md-ref-close" title="Close (Escape)">✕</button>
+        </div>
+
+        <div id="md-ref-tabs">
+          <button class="ref-tab active" data-tab="formatting">Formatting</button>
+          <button class="ref-tab" data-tab="structure">Structure</button>
+          <button class="ref-tab" data-tab="code">Code &amp; Math</button>
+          <button class="ref-tab" data-tab="extended">Extended</button>
+          <button class="ref-tab" data-tab="shortcuts">Shortcuts</button>
+        </div>
+
+        <div id="md-ref-body">
+
+          <!-- FORMATTING -->
+          <div class="ref-panel active" data-panel="formatting">
+            <section class="ref-section">
+              <h3>Headings</h3>
+              <table class="ref-table">
+                <tr><td><code># Heading 1</code></td><td>Largest heading (H1)</td></tr>
+                <tr><td><code>## Heading 2</code></td><td>Section heading (H2)</td></tr>
+                <tr><td><code>### Heading 3</code></td><td>Subsection (H3)</td></tr>
+                <tr><td><code>#### – ###### H4–H6</code></td><td>Smaller headings</td></tr>
+              </table>
+            </section>
+            <section class="ref-section">
+              <h3>Emphasis</h3>
+              <table class="ref-table">
+                <tr><td><code>**bold**</code> or <code>__bold__</code></td><td><strong>bold</strong></td></tr>
+                <tr><td><code>*italic*</code> or <code>_italic_</code></td><td><em>italic</em></td></tr>
+                <tr><td><code>***bold italic***</code></td><td><strong><em>bold italic</em></strong></td></tr>
+                <tr><td><code>~~strikethrough~~</code></td><td><s>strikethrough</s></td></tr>
+                <tr><td><code>==highlight==</code></td><td><mark style="background:#f9e2af44;color:#f9e2af;padding:0 3px;border-radius:3px">highlight</mark></td></tr>
+                <tr><td><code>++inserted++</code></td><td><ins style="text-decoration:underline;text-decoration-color:#a6e3a1;color:#a6e3a1">inserted</ins></td></tr>
+                <tr><td><code>^superscript^</code></td><td>x<sup>2</sup></td></tr>
+                <tr><td><code>~subscript~</code></td><td>H<sub>2</sub>O</td></tr>
+              </table>
+            </section>
+            <section class="ref-section">
+              <h3>Links &amp; Images</h3>
+              <table class="ref-table">
+                <tr><td><code>[label](url)</code></td><td>Inline link</td></tr>
+                <tr><td><code>[label](url "title")</code></td><td>Link with tooltip</td></tr>
+                <tr><td><code>![alt text](url)</code></td><td>Image</td></tr>
+                <tr><td><code>&lt;https://example.com&gt;</code></td><td>Auto-linked URL</td></tr>
+                <tr><td><code>[ref][id]</code> / <code>[id]: url</code></td><td>Reference-style link</td></tr>
+              </table>
+            </section>
+          </div>
+
+          <!-- STRUCTURE -->
+          <div class="ref-panel" data-panel="structure">
+            <section class="ref-section">
+              <h3>Lists</h3>
+              <table class="ref-table">
+                <tr><td><code>- item</code> / <code>* item</code> / <code>+ item</code></td><td>Unordered list item</td></tr>
+                <tr><td><code>1. item</code></td><td>Ordered list item</td></tr>
+                <tr><td><code>  - nested</code></td><td>Nested list (2-space indent)</td></tr>
+                <tr><td><code>- [x] done</code></td><td>Checked task</td></tr>
+                <tr><td><code>- [ ] todo</code></td><td>Unchecked task</td></tr>
+              </table>
+            </section>
+            <section class="ref-section">
+              <h3>Definition Lists</h3>
+              <div class="ref-block"><pre>Term
+: Definition text
+
+Another term
+: First definition
+: Second definition</pre></div>
+            </section>
+            <section class="ref-section">
+              <h3>Tables</h3>
+              <div class="ref-block"><pre>| Left  | Center | Right |
+|:------|:------:|------:|
+| cell  | cell   | cell  |</pre></div>
+              <p class="ref-note">Alignment: <code>:---</code> left · <code>:---:</code> center · <code>---:</code> right</p>
+            </section>
+            <section class="ref-section">
+              <h3>Blockquotes</h3>
+              <table class="ref-table">
+                <tr><td><code>&gt; quote text</code></td><td>Blockquote</td></tr>
+                <tr><td><code>&gt;&gt; nested</code></td><td>Nested blockquote</td></tr>
+                <tr><td><code>&gt; **Note**</code></td><td>Markdown works inside quotes</td></tr>
+              </table>
+            </section>
+            <section class="ref-section">
+              <h3>Horizontal Rule</h3>
+              <table class="ref-table">
+                <tr><td><code>---</code> / <code>***</code> / <code>___</code></td><td>Horizontal divider</td></tr>
+              </table>
+            </section>
+          </div>
+
+          <!-- CODE & MATH -->
+          <div class="ref-panel" data-panel="code">
+            <section class="ref-section">
+              <h3>Inline Code</h3>
+              <table class="ref-table">
+                <tr><td><code>`code`</code></td><td>Inline monospace code</td></tr>
+                <tr><td><code>``code with `backtick` ``</code></td><td>Escaped backtick inside</td></tr>
+              </table>
+            </section>
+            <section class="ref-section">
+              <h3>Fenced Code Blocks</h3>
+              <div class="ref-block"><pre>```javascript
+const x = 42;
+console.log(x);
+```</pre></div>
+              <p class="ref-note">Languages: <code>javascript</code> · <code>python</code> · <code>rust</code> · <code>bash</code> · <code>json</code> · <code>css</code> · <code>html</code> · <code>sql</code> · and many more (highlight.js)</p>
+            </section>
+            <section class="ref-section">
+              <h3>Math (KaTeX)</h3>
+              <table class="ref-table">
+                <tr><td><code>$E = mc^2$</code></td><td>Inline math</td></tr>
+                <tr><td><code>$\frac{1}{2}$</code></td><td>Fractions inline</td></tr>
+              </table>
+              <div class="ref-block"><pre>$$
+\int_0^\infty e^{-x^2} dx = \frac{\sqrt{\pi}}{2}
+$$</pre></div>
+              <p class="ref-note">Block math is centered and full-width</p>
+            </section>
+          </div>
+
+          <!-- EXTENDED -->
+          <div class="ref-panel" data-panel="extended">
+            <section class="ref-section">
+              <h3>Callout Blocks</h3>
+              <div class="ref-block"><pre>::: note Optional Title
+Content goes here.
+:::
+
+::: tip
+A helpful tip.
+:::
+
+::: warning Caution
+::: info
+::: danger Critical</pre></div>
+              <p class="ref-note">Types: <code>note</code> · <code>tip</code> · <code>info</code> · <code>warning</code> · <code>danger</code></p>
+            </section>
+            <section class="ref-section">
+              <h3>Footnotes</h3>
+              <div class="ref-block"><pre>Text with a footnote.[^1]
+
+[^1]: The footnote content goes here.</pre></div>
+            </section>
+            <section class="ref-section">
+              <h3>Table of Contents</h3>
+              <table class="ref-table">
+                <tr><td><code>[[toc]]</code></td><td>Auto-generated TOC from headings</td></tr>
+              </table>
+            </section>
+            <section class="ref-section">
+              <h3>Emoji</h3>
+              <table class="ref-table">
+                <tr><td><code>:smile:</code></td><td>😄</td></tr>
+                <tr><td><code>:rocket:</code></td><td>🚀</td></tr>
+                <tr><td><code>:warning:</code></td><td>⚠️</td></tr>
+                <tr><td><code>:tada:</code></td><td>🎉</td></tr>
+                <tr><td><code>:check:</code> / <code>:x:</code></td><td>✔️ / ❌</td></tr>
+              </table>
+              <p class="ref-note">All GitHub emoji shortcodes are supported.</p>
+            </section>
+            <section class="ref-section">
+              <h3>Heading Anchors</h3>
+              <p class="ref-note">Headings auto-generate anchor IDs. Hover a heading to see the <code>#</code> link. Link to them with <code>[text](#heading-title)</code>.</p>
+            </section>
+            <section class="ref-section">
+              <h3>Typographer</h3>
+              <table class="ref-table">
+                <tr><td><code>"quotes"</code></td><td>"smart quotes"</td></tr>
+                <tr><td><code>--</code></td><td>– en dash</td></tr>
+                <tr><td><code>---</code></td><td>— em dash</td></tr>
+                <tr><td><code>...</code></td><td>… ellipsis</td></tr>
+              </table>
+            </section>
+          </div>
+
+          <!-- SHORTCUTS -->
+          <div class="ref-panel" data-panel="shortcuts">
+            <section class="ref-section">
+              <h3>File</h3>
+              <table class="ref-table">
+                <tr><td><kbd>Ctrl N</kbd></td><td>New file</td></tr>
+                <tr><td><kbd>Ctrl O</kbd></td><td>Open file</td></tr>
+                <tr><td><kbd>Ctrl S</kbd></td><td>Save</td></tr>
+                <tr><td><kbd>Ctrl ⇧ S</kbd></td><td>Save As</td></tr>
+                <tr><td><kbd>F9</kbd></td><td>Rename file</td></tr>
+              </table>
+            </section>
+            <section class="ref-section">
+              <h3>Edit</h3>
+              <table class="ref-table">
+                <tr><td><kbd>Ctrl Z</kbd></td><td>Undo</td></tr>
+                <tr><td><kbd>Ctrl ⇧ Z</kbd></td><td>Redo</td></tr>
+                <tr><td><kbd>Ctrl F</kbd></td><td>Find</td></tr>
+                <tr><td><kbd>Ctrl H</kbd></td><td>Replace</td></tr>
+                <tr><td><kbd>Ctrl G</kbd></td><td>Go to line</td></tr>
+                <tr><td><kbd>Ctrl /</kbd></td><td>Toggle comment</td></tr>
+                <tr><td><kbd>Alt ↑ / ↓</kbd></td><td>Move line up / down</td></tr>
+                <tr><td><kbd>⇧ Alt ↓</kbd></td><td>Duplicate line</td></tr>
+                <tr><td><kbd>Ctrl ⇧ K</kbd></td><td>Delete line</td></tr>
+                <tr><td><kbd>Tab</kbd></td><td>Indent</td></tr>
+                <tr><td><kbd>⇧ Tab</kbd></td><td>Dedent</td></tr>
+              </table>
+            </section>
+            <section class="ref-section">
+              <h3>View</h3>
+              <table class="ref-table">
+                <tr><td><kbd>Ctrl \</kbd></td><td>Toggle preview pane</td></tr>
+                <tr><td><kbd>F1</kbd></td><td>Markdown reference</td></tr>
+                <tr><td><kbd>Escape</kbd></td><td>Close panel / search</td></tr>
+              </table>
+            </section>
+          </div>
+
+        </div><!-- /md-ref-body -->
+      </div><!-- /md-ref-inner -->
+    </div><!-- /md-ref -->
+
+  </div><!-- /app -->
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

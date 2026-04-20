@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 160" role="img" aria-label="Export pipeline">
+  <title>Export pipeline: Markdown → PDF / DOCX</title>
+  <defs>
+    <style>
+      .card { fill: #FAFAF9; stroke: #E7E5E4; stroke-width: 1; }
+      .dark { fill: #1C1917; }
+      .lab  { fill: #1C1917; font: 600 13px ui-sans-serif, system-ui; }
+      .sub  { fill: #78716C; font: 10px ui-sans-serif, system-ui; }
+      .wire { stroke: #EA580C; stroke-width: 2; fill: none; stroke-linecap: round; }
+      .dot  { fill: #EA580C; }
+      @keyframes dash { to { stroke-dashoffset: -24; } }
+      @keyframes glow { 0%,100%{opacity:.3} 50%{opacity:1} }
+      .wire { stroke-dasharray: 6 6; animation: dash 1.2s linear infinite; }
+      .d1 { animation: glow 2.4s infinite; animation-delay: 0s; }
+      .d2 { animation: glow 2.4s infinite; animation-delay: .8s; }
+      .d3 { animation: glow 2.4s infinite; animation-delay: 1.6s; }
+    </style>
+  </defs>
+
+  <!-- Source -->
+  <g transform="translate(20, 40)">
+    <rect class="card" width="140" height="80" rx="6"/>
+    <text class="lab" x="20" y="36">.md</text>
+    <text class="sub" x="20" y="56">source document</text>
+  </g>
+
+  <!-- Wires -->
+  <path class="wire" d="M 160 80 C 220 80 220 40 300 40"/>
+  <path class="wire" d="M 160 80 C 220 80 220 80 300 80"/>
+  <path class="wire" d="M 160 80 C 220 80 220 120 300 120"/>
+
+  <circle class="dot d1" cx="230" cy="40" r="3"/>
+  <circle class="dot d2" cx="230" cy="80" r="3"/>
+  <circle class="dot d3" cx="230" cy="120" r="3"/>
+
+  <!-- Outputs -->
+  <g transform="translate(300, 16)">
+    <rect class="card" width="200" height="48" rx="6"/>
+    <text class="lab" x="16" y="22">PDF · Chrome</text>
+    <text class="sub" x="16" y="38">auto-fetches Chromium</text>
+  </g>
+  <g transform="translate(300, 56)">
+    <rect class="card" width="200" height="48" rx="6"/>
+    <text class="lab" x="16" y="22">PDF · LaTeX</text>
+    <text class="sub" x="16" y="38">auto-fetches Tectonic</text>
+  </g>
+  <g transform="translate(300, 96)">
+    <rect class="card" width="200" height="48" rx="6"/>
+    <text class="lab" x="16" y="22">DOCX · Pandoc</text>
+    <text class="sub" x="16" y="38">auto-fetches Pandoc</text>
+  </g>
+</svg>

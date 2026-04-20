@@ -1,0 +1,24 @@
+<svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Rustmark logo">
+  <title>Rustmark</title>
+  <!-- Markdown "#" hash above the crab -->
+  <g transform="translate(67, 22)">
+    <path d="M 8 0 L 6 22 M 18 0 L 16 22 M 0 8 L 24 8 M 0 16 L 24 16"
+          stroke="#C2410C" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  </g>
+  <!-- Crab body -->
+  <g transform="translate(5, 15)">
+    <path d="M 35 75 Q 35 45 75 45 Q 115 45 115 75 Q 115 95 75 95 Q 35 95 35 75 Z"
+          fill="#EA580C"/>
+    <circle cx="62" cy="63" r="3.5" fill="#1C1917"/>
+    <circle cx="88" cy="63" r="3.5" fill="#1C1917"/>
+    <!-- Left claw -->
+    <circle cx="28" cy="77" r="10" fill="#EA580C"/>
+    <circle cx="24" cy="73" r="4" fill="#FAFAF9"/>
+    <!-- Right claw -->
+    <circle cx="122" cy="77" r="10" fill="#EA580C"/>
+    <circle cx="126" cy="73" r="4" fill="#FAFAF9"/>
+    <!-- Legs -->
+    <path d="M 42 95 L 35 110 M 55 98 L 50 115 M 95 98 L 100 115 M 108 95 L 115 110"
+          stroke="#EA580C" stroke-width="3" stroke-linecap="round" fill="none"/>
+  </g>
+</svg>

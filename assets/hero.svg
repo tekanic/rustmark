@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" role="img" aria-label="Rustmark animated hero">
+  <title>Rustmark — editor on the left, paginated preview on the right</title>
+  <defs>
+    <style>
+      .bg { fill: #1C1917; }
+      .panel { fill: #0F0E0D; stroke: #292524; stroke-width: 1; }
+      .page { fill: #FAFAF9; stroke: #E7E5E4; stroke-width: 1; }
+      .tok-h   { fill: #F97316; font: 600 12px ui-monospace, Menlo, monospace; }
+      .tok-txt { fill: #A8A29E; font: 12px ui-monospace, Menlo, monospace; }
+      .tok-sym { fill: #EA580C; font: 12px ui-monospace, Menlo, monospace; }
+      .prev-h  { fill: #1C1917; font: 700 14px Georgia, serif; }
+      .prev-p  { fill: #44403C; font: 11px Georgia, serif; }
+      .rule    { stroke: #E7E5E4; stroke-width: 1; }
+      .caret   { fill: #F97316; }
+      @keyframes blink { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+      @keyframes rise  { from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:translateY(0)} }
+      @keyframes flip  { 0%,40%{transform:translateX(0)} 55%,100%{transform:translateX(328px)} }
+      @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
+      .caret    { animation: blink 1s steps(1) infinite; }
+      .l1 { animation: rise .6s .2s both; }
+      .l2 { animation: rise .6s 1.0s both; }
+      .l3 { animation: rise .6s 1.8s both; }
+      .l4 { animation: rise .6s 2.6s both; }
+      .pg-a, .pg-b { animation: flip 4.5s 1.5s ease-in-out infinite; transform-origin: center; }
+      .crab { animation: pulse 2.4s ease-in-out infinite; transform-origin: 40px 30px; transform-box: fill-box; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="720" height="280"/>
+
+  <!-- Editor panel -->
+  <g transform="translate(24, 24)">
+    <rect class="panel" width="320" height="232" rx="8"/>
+    <circle cx="16" cy="16" r="4" fill="#EF4444"/>
+    <circle cx="30" cy="16" r="4" fill="#F59E0B"/>
+    <circle cx="44" cy="16" r="4" fill="#22C55E"/>
+    <g transform="translate(20, 52)">
+      <g class="l1"><text class="tok-h">#</text><text x="14" class="tok-txt">Rustmark</text></g>
+      <g class="l2" transform="translate(0, 28)">
+        <text class="tok-sym">&gt;</text>
+        <text x="14" class="tok-txt">A fast markdown editor.</text>
+      </g>
+      <g class="l3" transform="translate(0, 56)">
+        <text class="tok-h">##</text>
+        <text x="22" class="tok-txt">Features</text>
+      </g>
+      <g class="l4" transform="translate(0, 84)">
+        <text class="tok-sym">-</text>
+        <text x="14" class="tok-txt">Paginated live preview</text>
+      </g>
+      <rect class="caret" x="200" y="74" width="7" height="14"/>
+    </g>
+  </g>
+
+  <!-- Preview panel -->
+  <g transform="translate(376, 24)">
+    <rect class="panel" width="320" height="232" rx="8"/>
+    <!-- Two pages flipping -->
+    <g class="pg-a" transform="translate(20, 20)">
+      <rect class="page" width="180" height="192" rx="3"/>
+      <text class="prev-h" x="18" y="36">Rustmark</text>
+      <line class="rule" x1="18" y1="46" x2="162" y2="46"/>
+      <text class="prev-p" x="18" y="66">A fast markdown editor.</text>
+      <text class="prev-p" x="18" y="94" font-weight="700" fill="#1C1917">Features</text>
+      <text class="prev-p" x="18" y="112">• Paginated live preview</text>
+      <text class="prev-p" x="18" y="128">• Chrome &amp; LaTeX PDF export</text>
+      <text class="prev-p" x="18" y="144">• DOCX via Pandoc</text>
+      <text class="prev-p" x="18" y="176" fill="#A8A29E" font-size="9">— 1 —</text>
+    </g>
+    <g class="pg-b" transform="translate(20, 20)" opacity="0.55">
+      <rect class="page" width="180" height="192" rx="3"/>
+    </g>
+  </g>
+
+  <!-- Crab mark, bottom-right corner -->
+  <g class="crab" transform="translate(640, 214)">
+    <g transform="scale(0.5)">
+      <path d="M 35 75 Q 35 45 75 45 Q 115 45 115 75 Q 115 95 75 95 Q 35 95 35 75 Z" fill="#EA580C"/>
+      <circle cx="62" cy="63" r="3.5" fill="#1C1917"/>
+      <circle cx="88" cy="63" r="3.5" fill="#1C1917"/>
+      <circle cx="28" cy="77" r="10" fill="#EA580C"/>
+      <circle cx="24" cy="73" r="4" fill="#FAFAF9"/>
+      <circle cx="122" cy="77" r="10" fill="#EA580C"/>
+      <circle cx="126" cy="73" r="4" fill="#FAFAF9"/>
+      <path d="M 42 95 L 35 110 M 55 98 L 50 115 M 95 98 L 100 115 M 108 95 L 115 110"
+            stroke="#EA580C" stroke-width="3" stroke-linecap="round" fill="none"/>
+    </g>
+  </g>
+</svg>
