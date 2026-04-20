@@ -1,80 +1,275 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 280" role="img" aria-label="Rustmark animated hero">
-  <title>Rustmark — editor on the left, paginated preview on the right</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1040 620" role="img"
+     aria-label="Rustmark UI — editor and paginated preview">
+  <title>Rustmark — source pane (left) and paginated markdown preview (right)</title>
   <defs>
     <style>
-      .bg { fill: #1C1917; }
-      .panel { fill: #0F0E0D; stroke: #292524; stroke-width: 1; }
-      .page { fill: #FAFAF9; stroke: #E7E5E4; stroke-width: 1; }
-      .tok-h   { fill: #F97316; font: 600 12px ui-monospace, Menlo, monospace; }
-      .tok-txt { fill: #A8A29E; font: 12px ui-monospace, Menlo, monospace; }
-      .tok-sym { fill: #EA580C; font: 12px ui-monospace, Menlo, monospace; }
-      .prev-h  { fill: #1C1917; font: 700 14px Georgia, serif; }
-      .prev-p  { fill: #44403C; font: 11px Georgia, serif; }
-      .rule    { stroke: #E7E5E4; stroke-width: 1; }
-      .caret   { fill: #F97316; }
+      /* Catppuccin Mocha palette used by the real app */
+      .app-bg      { fill: #1e1e2e; }
+      .panel-bg    { fill: #181825; }
+      .toolbar-bg  { fill: #13131f; }
+      .status-bg   { fill: #11111b; }
+      .gutter-bg   { fill: #13131f; }
+      .border      { stroke: #313244; stroke-width: 1; fill: none; }
+      .sep         { stroke: #313244; stroke-width: 1; }
+
+      .ui    { font: 500 11px -apple-system, "Segoe UI", system-ui, sans-serif; fill: #cdd6f4; }
+      .ui-mu { font: 500 11px -apple-system, "Segoe UI", system-ui, sans-serif; fill: #6c7086; }
+      .mono  { font: 12px ui-monospace, Menlo, "SF Mono", monospace; fill: #cdd6f4; }
+      .mono-mu { font: 12px ui-monospace, Menlo, monospace; fill: #6c7086; }
+      .ln    { font: 11px ui-monospace, Menlo, monospace; fill: #45475a; }
+
+      /* Preview: dark text on white paper */
+      .prev-bg   { fill: #FAFAF9; stroke: #E7E5E4; stroke-width: 1; }
+      .prev-h1   { fill: #1C1917; font: 700 20px Georgia, serif; }
+      .prev-h2   { fill: #1C1917; font: 700 14px Georgia, serif; }
+      .prev-h3   { fill: #1C1917; font: 700 12px Georgia, serif; }
+      .prev-p    { fill: #1C1917; font: 12px Georgia, serif; }
+      .prev-mu   { fill: #78716C; font: 10px Georgia, serif; }
+      .prev-rule { stroke: #E7E5E4; stroke-width: 1; }
+      .prev-code { font: 11px ui-monospace, Menlo, monospace; fill: #C2410C; }
+      .prev-link { fill: #1D4ED8; font: 12px Georgia, serif; text-decoration: underline; }
+
+      .btn   { fill: #313244; }
+      .btn-a { fill: #45475a; }
+
       @keyframes blink { 0%,49%{opacity:1} 50%,100%{opacity:0} }
-      @keyframes rise  { from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:translateY(0)} }
-      @keyframes flip  { 0%,40%{transform:translateX(0)} 55%,100%{transform:translateX(328px)} }
-      @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
-      .caret    { animation: blink 1s steps(1) infinite; }
-      .l1 { animation: rise .6s .2s both; }
-      .l2 { animation: rise .6s 1.0s both; }
-      .l3 { animation: rise .6s 1.8s both; }
-      .l4 { animation: rise .6s 2.6s both; }
-      .pg-a, .pg-b { animation: flip 4.5s 1.5s ease-in-out infinite; transform-origin: center; }
-      .crab { animation: pulse 2.4s ease-in-out infinite; transform-origin: 40px 30px; transform-box: fill-box; }
+      .caret { fill: #89b4fa; animation: blink 1s steps(1) infinite; }
+
+      @keyframes nudge { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-1px)} }
+      .crab { animation: nudge 3s ease-in-out infinite; transform-origin: center; transform-box: fill-box; }
     </style>
   </defs>
 
-  <rect class="bg" width="720" height="280"/>
+  <!-- Outer window -->
+  <rect class="app-bg" width="1040" height="620" rx="10"/>
+  <rect x="0.5" y="0.5" width="1039" height="619" rx="10" class="border"/>
 
-  <!-- Editor panel -->
-  <g transform="translate(24, 24)">
-    <rect class="panel" width="320" height="232" rx="8"/>
-    <circle cx="16" cy="16" r="4" fill="#EF4444"/>
-    <circle cx="30" cy="16" r="4" fill="#F59E0B"/>
-    <circle cx="44" cy="16" r="4" fill="#22C55E"/>
-    <g transform="translate(20, 52)">
-      <g class="l1"><text class="tok-h">#</text><text x="14" class="tok-txt">Rustmark</text></g>
-      <g class="l2" transform="translate(0, 28)">
-        <text class="tok-sym">&gt;</text>
-        <text x="14" class="tok-txt">A fast markdown editor.</text>
-      </g>
-      <g class="l3" transform="translate(0, 56)">
-        <text class="tok-h">##</text>
-        <text x="22" class="tok-txt">Features</text>
-      </g>
-      <g class="l4" transform="translate(0, 84)">
-        <text class="tok-sym">-</text>
-        <text x="14" class="tok-txt">Paginated live preview</text>
-      </g>
-      <rect class="caret" x="200" y="74" width="7" height="14"/>
+  <!-- Title bar -->
+  <circle cx="20" cy="20" r="6" fill="#f38ba8"/>
+  <circle cx="40" cy="20" r="6" fill="#f9e2af"/>
+  <circle cx="60" cy="20" r="6" fill="#a6e3a1"/>
+  <text x="520" y="24" text-anchor="middle" class="ui-mu">quarterly-report.md ● — Rustmark</text>
+
+  <!-- Main toolbar -->
+  <g transform="translate(0, 40)">
+    <rect class="toolbar-bg" width="1040" height="40"/>
+    <line x1="0" y1="40" x2="1040" y2="40" class="sep"/>
+
+    <g transform="translate(10, 8)">
+      <rect class="btn" width="62" height="24" rx="4"/>
+      <text x="31" y="16" text-anchor="middle" class="ui">＋ New</text>
+      <rect class="btn" width="68" height="24" rx="4" x="68"/>
+      <text x="102" y="16" text-anchor="middle" class="ui">📂 Open</text>
+      <line x1="144" y1="4" x2="144" y2="20" class="sep"/>
+      <rect class="btn" width="62" height="24" rx="4" x="152"/>
+      <text x="183" y="16" text-anchor="middle" class="ui">💾 Save</text>
+      <rect class="btn" width="80" height="24" rx="4" x="218"/>
+      <text x="258" y="16" text-anchor="middle" class="ui">Save As…</text>
+    </g>
+
+    <g transform="translate(435, 10)">
+      <text x="85" y="15" text-anchor="middle" class="ui">quarterly-report.md</text>
+      <circle cx="172" cy="11" r="3" fill="#89b4fa"/>
+    </g>
+
+    <g transform="translate(660, 8)">
+      <rect class="btn" width="28" height="24" rx="4"/>
+      <text x="14" y="16" text-anchor="middle" class="ui">↶</text>
+      <rect class="btn" width="28" height="24" rx="4" x="32"/>
+      <text x="46" y="16" text-anchor="middle" class="ui">↷</text>
+      <line x1="68" y1="4" x2="68" y2="20" class="sep"/>
+      <rect class="btn" width="78" height="24" rx="4" x="76"/>
+      <text x="115" y="16" text-anchor="middle" class="ui">⚙ Settings</text>
+      <rect class="btn-a" width="72" height="24" rx="4" x="160"/>
+      <text x="196" y="16" text-anchor="middle" class="ui">⇪ Export</text>
+      <rect class="btn" width="58" height="24" rx="4" x="238"/>
+      <text x="267" y="16" text-anchor="middle" class="ui">🔍 Find</text>
+      <line x1="302" y1="4" x2="302" y2="20" class="sep"/>
+      <rect class="btn" width="76" height="24" rx="4" x="310"/>
+      <text x="348" y="16" text-anchor="middle" class="ui">☑ Preview</text>
     </g>
   </g>
 
-  <!-- Preview panel -->
-  <g transform="translate(376, 24)">
-    <rect class="panel" width="320" height="232" rx="8"/>
-    <!-- Two pages flipping -->
-    <g class="pg-a" transform="translate(20, 20)">
-      <rect class="page" width="180" height="192" rx="3"/>
-      <text class="prev-h" x="18" y="36">Rustmark</text>
-      <line class="rule" x1="18" y1="46" x2="162" y2="46"/>
-      <text class="prev-p" x="18" y="66">A fast markdown editor.</text>
-      <text class="prev-p" x="18" y="94" font-weight="700" fill="#1C1917">Features</text>
-      <text class="prev-p" x="18" y="112">• Paginated live preview</text>
-      <text class="prev-p" x="18" y="128">• Chrome &amp; LaTeX PDF export</text>
-      <text class="prev-p" x="18" y="144">• DOCX via Pandoc</text>
-      <text class="prev-p" x="18" y="176" fill="#A8A29E" font-size="9">— 1 —</text>
-    </g>
-    <g class="pg-b" transform="translate(20, 20)" opacity="0.55">
-      <rect class="page" width="180" height="192" rx="3"/>
+  <!-- Format toolbar -->
+  <g transform="translate(0, 80)">
+    <rect class="toolbar-bg" width="1040" height="34"/>
+    <line x1="0" y1="34" x2="1040" y2="34" class="sep"/>
+    <g transform="translate(10, 6)">
+      <rect class="btn" width="22" height="22" rx="4"/>
+      <text x="11" y="16" text-anchor="middle" class="ui" font-weight="700">B</text>
+      <rect class="btn" width="22" height="22" rx="4" x="26"/>
+      <text x="37" y="16" text-anchor="middle" class="ui" font-style="italic">I</text>
+      <rect class="btn" width="22" height="22" rx="4" x="52"/>
+      <text x="63" y="16" text-anchor="middle" class="ui" text-decoration="line-through">S</text>
+      <rect class="btn" width="28" height="22" rx="4" x="78"/>
+      <text x="92" y="16" text-anchor="middle" class="mono">&lt;/&gt;</text>
+      <rect class="btn" width="22" height="22" rx="4" x="110"/>
+      <text x="121" y="16" text-anchor="middle" class="ui">🔗</text>
+      <line x1="138" y1="3" x2="138" y2="19" class="sep"/>
+      <rect class="btn" width="26" height="22" rx="4" x="146"/>
+      <text x="159" y="16" text-anchor="middle" class="ui">H1</text>
+      <rect class="btn" width="26" height="22" rx="4" x="176"/>
+      <text x="189" y="16" text-anchor="middle" class="ui">H2</text>
+      <rect class="btn" width="26" height="22" rx="4" x="206"/>
+      <text x="219" y="16" text-anchor="middle" class="ui">H3</text>
+      <rect class="btn" width="26" height="22" rx="4" x="236"/>
+      <text x="249" y="16" text-anchor="middle" class="ui">H4</text>
+      <line x1="268" y1="3" x2="268" y2="19" class="sep"/>
+      <rect class="btn" width="22" height="22" rx="4" x="276"/>
+      <text x="287" y="16" text-anchor="middle" class="ui">▦</text>
+      <line x1="304" y1="3" x2="304" y2="19" class="sep"/>
+      <rect class="btn" width="22" height="22" rx="4" x="312"/>
+      <text x="323" y="16" text-anchor="middle" class="ui">•</text>
+      <rect class="btn" width="22" height="22" rx="4" x="338"/>
+      <text x="349" y="16" text-anchor="middle" class="ui">1.</text>
+      <rect class="btn" width="22" height="22" rx="4" x="364"/>
+      <text x="375" y="16" text-anchor="middle" class="ui">❝</text>
+      <rect class="btn" width="26" height="22" rx="4" x="390"/>
+      <text x="403" y="16" text-anchor="middle" class="mono">{ }</text>
+      <rect class="btn" width="22" height="22" rx="4" x="420"/>
+      <text x="431" y="16" text-anchor="middle" class="ui">─</text>
     </g>
   </g>
 
-  <!-- Crab mark, bottom-right corner -->
-  <g class="crab" transform="translate(640, 214)">
-    <g transform="scale(0.5)">
+  <!-- Main split: editor | preview -->
+  <g transform="translate(0, 114)">
+    <!-- LEFT: editor pane -->
+    <rect class="panel-bg" width="520" height="478"/>
+    <rect class="gutter-bg" width="42" height="478"/>
+    <line x1="520" y1="0" x2="520" y2="478" class="sep"/>
+
+    <!-- Line numbers -->
+    <g class="ln">
+      <text x="32" y="26"  text-anchor="end">1</text>
+      <text x="32" y="46"  text-anchor="end">2</text>
+      <text x="32" y="66"  text-anchor="end">3</text>
+      <text x="32" y="86"  text-anchor="end">4</text>
+      <text x="32" y="106" text-anchor="end">5</text>
+      <text x="32" y="126" text-anchor="end">6</text>
+      <text x="32" y="146" text-anchor="end">7</text>
+      <text x="32" y="166" text-anchor="end">8</text>
+      <text x="32" y="186" text-anchor="end">9</text>
+      <text x="32" y="206" text-anchor="end">10</text>
+      <text x="32" y="226" text-anchor="end">11</text>
+      <text x="32" y="246" text-anchor="end">12</text>
+      <text x="32" y="266" text-anchor="end">13</text>
+      <text x="32" y="286" text-anchor="end">14</text>
+      <text x="32" y="306" text-anchor="end">15</text>
+      <text x="32" y="326" text-anchor="end">16</text>
+      <text x="32" y="346" text-anchor="end">17</text>
+      <text x="32" y="366" text-anchor="end">18</text>
+      <text x="32" y="386" text-anchor="end">19</text>
+      <text x="32" y="406" text-anchor="end">20</text>
+      <text x="32" y="426" text-anchor="end">21</text>
+      <text x="32" y="446" text-anchor="end">22</text>
+    </g>
+
+    <!-- Active-line highlight on line 11 -->
+    <rect x="42" y="214" width="478" height="18" fill="#1e1e2e" opacity="0.6"/>
+
+    <!-- Markdown source, syntax-highlighted -->
+    <g transform="translate(54, 0)">
+      <text y="26"  class="mono-mu">---</text>
+
+      <text y="46"><tspan class="mono" fill="#cba6f7">title:</tspan><tspan class="mono"> Quarterly Report</tspan></text>
+      <text y="66"><tspan class="mono" fill="#cba6f7">author:</tspan><tspan class="mono"> tekanic</tspan></text>
+      <text y="86"><tspan class="mono" fill="#cba6f7">date:</tspan><tspan class="mono"> 2026-04-20</tspan></text>
+      <text y="106"><tspan class="mono" fill="#cba6f7">toc:</tspan><tspan class="mono" fill="#fab387"> true</tspan></text>
+      <text y="126"><tspan class="mono" fill="#cba6f7">theme:</tspan><tspan class="mono"> modern</tspan></text>
+
+      <text y="146" class="mono-mu">---</text>
+
+      <text y="186"><tspan class="mono" fill="#f38ba8"># </tspan><tspan class="mono" fill="#89b4fa" font-weight="700">Executive Summary</tspan></text>
+
+      <text y="226"><tspan class="mono">Revenue grew </tspan><tspan class="mono" fill="#a6e3a1" font-weight="700">**24%**</tspan><tspan class="mono"> year-over-year,</tspan></text>
+      <text y="246"><tspan class="mono">driven by the </tspan><tspan class="mono" fill="#94e2d5">[enterprise tier]</tspan><tspan class="mono" fill="#89b4fa">(#enterprise)</tspan><tspan class="mono">.</tspan></text>
+
+      <text y="286"><tspan class="mono" fill="#f38ba8">## </tspan><tspan class="mono" fill="#89b4fa" font-weight="700">Highlights</tspan></text>
+
+      <text y="326"><tspan class="mono" fill="#fab387">- </tspan><tspan class="mono">ARR crossed </tspan><tspan class="mono" fill="#a6e3a1" font-weight="700">$12M</tspan></text>
+      <text y="346"><tspan class="mono" fill="#fab387">- </tspan><tspan class="mono">Net retention at </tspan><tspan class="mono" fill="#a6e3a1" font-weight="700">118%</tspan></text>
+      <text y="366"><tspan class="mono" fill="#fab387">- </tspan><tspan class="mono">Shipped </tspan><tspan class="mono" fill="#f9e2af">`Rustmark 0.1`</tspan><tspan class="mono"> exporter</tspan></text>
+
+      <text y="406"><tspan class="mono" fill="#f38ba8">### </tspan><tspan class="mono" fill="#89b4fa" font-weight="700">KPI Table</tspan></text>
+      <text y="446" class="mono-mu">| Metric       | Q4    | Q1    |</text>
+
+      <!-- caret at end of line 11 (y=226 → top at 214) -->
+      <rect class="caret" x="248" y="214" width="2" height="16"/>
+    </g>
+
+    <!-- Gutter drag-handle -->
+    <rect x="518" y="228" width="4" height="24" rx="2" fill="#313244"/>
+
+    <!-- RIGHT: preview pane -->
+    <g transform="translate(522, 0)">
+      <rect class="app-bg" width="518" height="478"/>
+      <!-- Second page peeking behind -->
+      <rect class="prev-bg" x="48" y="30" width="438" height="438" rx="2" opacity="0.3"/>
+
+      <!-- Front page -->
+      <g transform="translate(40, 20)">
+        <rect class="prev-bg" width="438" height="438" rx="2"/>
+
+        <text class="prev-h1" x="34" y="58">Quarterly Report</text>
+        <text class="prev-mu" x="34" y="78">tekanic · April 20, 2026</text>
+        <line class="prev-rule" x1="34" y1="92" x2="404" y2="92"/>
+
+        <text class="prev-h2" x="34" y="118">Contents</text>
+        <text class="prev-p"  x="34" y="140">1. Executive Summary</text>
+        <text class="prev-p"  x="34" y="158">2. Highlights</text>
+        <text class="prev-p"  x="48" y="176">2.1 KPI Table</text>
+
+        <text class="prev-h2" x="34" y="210">Executive Summary</text>
+        <text class="prev-p"  x="34" y="232">Revenue grew <tspan font-weight="700">24%</tspan> year-over-year,</text>
+        <text class="prev-p"  x="34" y="250">driven by the <tspan class="prev-link">enterprise tier</tspan>.</text>
+
+        <text class="prev-h2" x="34" y="286">Highlights</text>
+        <g transform="translate(34, 298)">
+          <circle cx="6" cy="10" r="2" fill="#1C1917"/>
+          <text class="prev-p" x="16" y="14">ARR crossed <tspan font-weight="700">$12M</tspan></text>
+          <circle cx="6" cy="28" r="2" fill="#1C1917"/>
+          <text class="prev-p" x="16" y="32">Net retention at <tspan font-weight="700">118%</tspan></text>
+          <circle cx="6" cy="46" r="2" fill="#1C1917"/>
+          <text class="prev-p" x="16" y="50">Shipped <tspan class="prev-code">Rustmark 0.1</tspan> exporter</text>
+        </g>
+
+        <text class="prev-h3" x="34" y="378">KPI Table</text>
+        <g transform="translate(34, 388)">
+          <rect x="0" y="0" width="370" height="22" fill="#F5F5F4"/>
+          <line x1="0" y1="22" x2="370" y2="22" stroke="#D6D3D1"/>
+          <text class="prev-p" x="10"  y="15" font-weight="700">Metric</text>
+          <text class="prev-p" x="230" y="15" font-weight="700" text-anchor="end">Q4</text>
+          <text class="prev-p" x="360" y="15" font-weight="700" text-anchor="end">Q1</text>
+          <line x1="0" y1="42" x2="370" y2="42" stroke="#E7E5E4"/>
+          <text class="prev-p" x="10"  y="36">Revenue</text>
+          <text class="prev-p" x="230" y="36" text-anchor="end">$9.6M</text>
+          <text class="prev-p" x="360" y="36" text-anchor="end">$11.9M</text>
+          <text class="prev-p" x="10"  y="55">Net Retention</text>
+          <text class="prev-p" x="230" y="55" text-anchor="end">112%</text>
+          <text class="prev-p" x="360" y="55" text-anchor="end">118%</text>
+        </g>
+
+        <text class="prev-mu" x="219" y="426" text-anchor="middle">— 1 —</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Status bar -->
+  <g transform="translate(0, 592)">
+    <rect class="status-bg" width="1040" height="28"/>
+    <line x1="0" y1="0" x2="1040" y2="0" class="sep"/>
+    <text x="14"  y="18" class="ui-mu">Ln 11, Col 29</text>
+    <text x="120" y="18" class="ui-mu">│  184 words</text>
+    <text x="214" y="18" class="ui-mu">│  22 lines</text>
+    <g transform="translate(520, 18)" text-anchor="middle">
+      <text class="ui"><tspan fill="#a6e3a1">● 0 errors</tspan><tspan dx="10" fill="#f9e2af">● 2 warnings</tspan></text>
+    </g>
+    <text x="1026" y="18" text-anchor="end" class="ui-mu">Markdown · UTF-8</text>
+  </g>
+
+  <!-- Crab mascot, top-right -->
+  <g class="crab" transform="translate(980, 8)">
+    <g transform="scale(0.22)">
       <path d="M 35 75 Q 35 45 75 45 Q 115 45 115 75 Q 115 95 75 95 Q 35 95 35 75 Z" fill="#EA580C"/>
       <circle cx="62" cy="63" r="3.5" fill="#1C1917"/>
       <circle cx="88" cy="63" r="3.5" fill="#1C1917"/>
