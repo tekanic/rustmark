@@ -11,6 +11,7 @@ import { initDocSettings, openDocSettings, closeDocSettings, syncDocSettingsFrom
 import { exportPDF, exportDOCX, exportPDFPandoc, pandocAvailable, exportPDFChromium, chromeAvailable } from "./export.js";
 import { scheduleRender, renderPreview } from "./preview.js";
 import { lint } from "./linter.js";
+import { initOutline, updateOutline, highlightCurrentHeading, toggleOutline } from "./outline.js";
 import { openFile, saveFile, saveFileAs, renameFile, basename, dirname, joinPath } from "./fileops.js";
 
 // ── State ─────────────────────────────────────────────────────────────────────
@@ -60,6 +61,8 @@ function onContentChange(text) {
   scheduleLint(text);
   updateStatusWords(text);
   updateStatusLines(text);
+  updateOutline(text);
+  highlightCurrentHeading(getCursorInfo(editor).line - 1);
 }
 
 // ── Status bar ────────────────────────────────────────────────────────────────
@@ -71,6 +74,7 @@ editor.dom.addEventListener("focus", updateCursor);
 function updateCursor() {
   const { line, col } = getCursorInfo(editor);
   stCursor.textContent = `Ln ${line}, Col ${col}`;
+  highlightCurrentHeading(line - 1);
 }
 
 function updateStatusWords(text) {
@@ -221,6 +225,7 @@ async function cmdNew() {
   updateStatusWords("");
   updateStatusLines("");
   runLint("");
+  updateOutline("");
   editor.focus();
 }
 
@@ -236,6 +241,7 @@ async function cmdOpen() {
     updateStatusWords(result.content);
     updateStatusLines(result.content);
     runLint(result.content);
+    updateOutline(result.content);
     editor.focus();
   } catch (e) {
     alert(`Could not open file: ${e}`);
@@ -414,6 +420,7 @@ document.getElementById("btn-undo").addEventListener("click", () => { editorUndo
 document.getElementById("btn-redo").addEventListener("click", () => { editorRedo(editor); editor.focus(); });
 document.getElementById("btn-find").addEventListener("click", () => { editorFind(editor); });
 document.getElementById("btn-goto").addEventListener("click", toggleGotoBar);
+document.getElementById("btn-outline").addEventListener("click", toggleOutline);
 
 // ── Formatting toolbar ────────────────────────────────────────────────────────
 
@@ -510,6 +517,7 @@ document.addEventListener("keydown", e => {
     case "t": e.preventDefault(); openTableCreator(); break;
     case "E": e.preventDefault(); openExportModal(); break;
     case "D": e.preventDefault(); openDocSettings(); break;
+    case "O": e.preventDefault(); toggleOutline(); break;
     case "b": e.preventDefault(); wrapInline(editor, "**"); break;
     case "i": e.preventDefault(); wrapInline(editor, "_"); break;
     case "1": e.preventDefault(); setHeading(editor, 1); break;
@@ -595,8 +603,23 @@ initDocSettings(
     runLint(newText);
     updateStatusWords(newText);
     updateStatusLines(newText);
+    updateOutline(newText);
   }
 );
+
+initOutline({
+  onNavigate: (line0) => {
+    const lineNum = Math.min(line0 + 1, editor.state.doc.lines);
+    const line = editor.state.doc.line(lineNum);
+    editor.dispatch({
+      selection: { anchor: line.from },
+      effects: EditorView.scrollIntoView(line.from, { y: "start" }),
+    });
+    editor.focus();
+    highlightCurrentHeading(line0);
+  },
+});
+updateOutline("");
 
 initTableCreator(markdown => {
   const { from, to } = editor.state.selection.main;

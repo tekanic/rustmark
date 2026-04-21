@@ -68,6 +68,10 @@
           Go to
         </button>
         <div class="toolbar-sep"></div>
+        <button id="btn-outline" class="tb-btn tb-btn-ghost" title="Toggle document outline (Ctrl+Shift+O)">
+          <svg viewBox="0 0 16 16"><path d="M2 2.5a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm4 0a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm-4 4a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm4 0a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm-4 4a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm4 0a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5zm-4 4a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 0 1h-2a.5.5 0 0 1-.5-.5zm4 0a.5.5 0 0 1 .5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5z"/></svg>
+          Outline
+        </button>
         <label class="tb-toggle" title="Toggle preview (Ctrl+\\)">
           <input type="checkbox" id="toggle-preview" checked />
           <span>Preview</span>
@@ -145,6 +149,17 @@
 
     <!-- Main split pane -->
     <main id="main">
+      <aside id="outline-pane" class="hidden">
+        <div id="outline-header">
+          <span id="outline-title">Outline</span>
+          <div id="outline-header-btns">
+            <button id="outline-side" title="Move outline to right">⇄</button>
+            <button id="outline-close" title="Close (Ctrl+Shift+O)">✕</button>
+          </div>
+        </div>
+        <div id="outline-list"></div>
+      </aside>
+      <div id="outline-gutter" class="hidden" title="Drag to resize outline"></div>
       <div id="editor-pane">
         <div id="editor-wrap"></div>
       </div>

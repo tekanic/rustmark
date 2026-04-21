@@ -3,7 +3,7 @@ import { EditorState, Compartment } from "@codemirror/state";
 import { defaultKeymap, historyKeymap, history, indentWithTab,
          undo, redo, toggleComment, moveLineUp, moveLineDown, copyLineDown,
          selectAll, deleteLine } from "@codemirror/commands";
-import { searchKeymap, highlightSelectionMatches, openSearchPanel, gotoLine } from "@codemirror/search";
+import { searchKeymap, openSearchPanel, gotoLine } from "@codemirror/search";
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
 import { syntaxHighlighting, HighlightStyle, bracketMatching } from "@codemirror/language";
@@ -192,7 +192,6 @@ export function createEditor(container, initialDoc, onChange) {
     bracketMatching(),
     closeBrackets(),
     highlightActiveLine(),
-    highlightSelectionMatches(),
     autocompletion(),
     ...createSpellCheckExtension(),
     markdown({ base: markdownLanguage, codeLanguages: languages }),
