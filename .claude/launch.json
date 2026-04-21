@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "tekanics-landing",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--", "--port", "4322"],
+      "cwd": "../personal/tekanics/landing",
+      "port": 4322
+    }
+  ]
+}

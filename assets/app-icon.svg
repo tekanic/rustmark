@@ -1,0 +1,48 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Rustmark app icon">
+  <title>Rustmark</title>
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="32%" r="85%">
+      <stop offset="0%" stop-color="#2C2725"/>
+      <stop offset="100%" stop-color="#1C1917"/>
+    </radialGradient>
+    <linearGradient id="body" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#F97316"/>
+      <stop offset="100%" stop-color="#C2410C"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="0" y="0" width="1024" height="1024" rx="229" ry="229" fill="url(#bg)"/>
+
+  <!-- Markdown hash above crab -->
+  <g stroke="#FED7AA" stroke-width="44" stroke-linecap="round" fill="none">
+    <path d="M 472 130 L 452 350"/>
+    <path d="M 572 130 L 552 350"/>
+    <path d="M 392 210 L 632 210"/>
+    <path d="M 392 290 L 632 290"/>
+  </g>
+
+  <g>
+    <!-- Legs (behind body) -->
+    <path d="M 297 742 L 252 840 M 382 762 L 349 872 M 642 762 L 675 872 M 726 742 L 772 840"
+          stroke="#C2410C" stroke-width="28" stroke-linecap="round" fill="none"/>
+
+    <!-- Claws -->
+    <circle cx="206" cy="626" r="65" fill="url(#body)"/>
+    <circle cx="180" cy="600" r="26" fill="#FAFAF9"/>
+    <circle cx="818" cy="626" r="65" fill="url(#body)"/>
+    <circle cx="844" cy="600" r="26" fill="#FAFAF9"/>
+
+    <!-- Body -->
+    <path d="M 252 580 Q 252 420 512 420 Q 772 420 772 580 Q 772 740 512 740 Q 252 740 252 580 Z"
+          fill="url(#body)"/>
+
+    <!-- Body highlight -->
+    <ellipse cx="512" cy="490" rx="200" ry="32" fill="#FDBA74" opacity="0.5"/>
+
+    <!-- Eyes -->
+    <circle cx="428" cy="535" r="23" fill="#1C1917"/>
+    <circle cx="596" cy="535" r="23" fill="#1C1917"/>
+    <circle cx="436" cy="527" r="7" fill="#FAFAF9"/>
+    <circle cx="604" cy="527" r="7" fill="#FAFAF9"/>
+  </g>
+</svg>
