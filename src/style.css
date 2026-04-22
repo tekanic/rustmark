@@ -899,6 +899,30 @@ html, body, #app {
 
 /* ── Extended markdown elements ─────────────────────────────────────────────── */
 
+/* Alignment wrappers (inserted by the toolbar's center/right buttons).
+   text-align centers inline content; tables and images are block-level and
+   need explicit margin-auto to move horizontally. */
+.markdown-body div[style*="text-align:center"] > table,
+.markdown-body div[style*="text-align: center"] > table,
+.pg-body        div[style*="text-align:center"] > table,
+.pg-body        div[style*="text-align: center"] > table {
+  margin-left: auto;
+  margin-right: auto;
+}
+.markdown-body div[style*="text-align:right"] > table,
+.markdown-body div[style*="text-align: right"] > table,
+.pg-body        div[style*="text-align:right"] > table,
+.pg-body        div[style*="text-align: right"] > table {
+  margin-left: auto;
+  margin-right: 0;
+}
+.markdown-body div[style*="text-align:center"] img,
+.markdown-body div[style*="text-align: center"] img,
+.pg-body        div[style*="text-align:center"] img,
+.pg-body        div[style*="text-align: center"] img {
+  display: inline-block;
+}
+
 /* ==mark== highlight */
 .markdown-body mark {
   background: #f9e2af44;
@@ -930,40 +954,6 @@ html, body, #app {
 .markdown-body sup { top: -0.5em; }
 .markdown-body sub { bottom: -0.25em; }
 
-
-/* Heading text is wrapped in <a class="header-anchor"> — reset link styling */
-.markdown-body h1 .header-anchor,
-.markdown-body h2 .header-anchor,
-.markdown-body h3 .header-anchor,
-.markdown-body h4 .header-anchor,
-.markdown-body h5 .header-anchor,
-.markdown-body h6 .header-anchor {
-  color: inherit;
-  text-decoration: none;
-  opacity: 1;
-  margin-left: 0;
-  font-size: inherit;
-}
-
-/* Show the # symbol on hover via ::after pseudo-element */
-.markdown-body h1 .header-anchor::after,
-.markdown-body h2 .header-anchor::after,
-.markdown-body h3 .header-anchor::after,
-.markdown-body h4 .header-anchor::after,
-.markdown-body h5 .header-anchor::after,
-.markdown-body h6 .header-anchor::after {
-  content: " #";
-  font-size: 0.7em;
-  color: var(--md-link);
-  opacity: 0;
-  transition: opacity 0.15s;
-}
-.markdown-body h1:hover .header-anchor::after,
-.markdown-body h2:hover .header-anchor::after,
-.markdown-body h3:hover .header-anchor::after,
-.markdown-body h4:hover .header-anchor::after,
-.markdown-body h5:hover .header-anchor::after,
-.markdown-body h6:hover .header-anchor::after { opacity: 1; }
 
 /* Table of contents [[toc]] */
 .markdown-body .toc {

@@ -40,10 +40,7 @@ const md = new MarkdownIt({
     return `<pre class="hljs"><code>${md.utils.escapeHtml(code)}</code></pre>`;
   },
 })
-  .use(markdownItAnchor, {
-    slugify,
-    permalink: markdownItAnchor.permalink.headerLink({ safariReaderFix: true }),
-  })
+  .use(markdownItAnchor, { slugify })
   .use(markdownItToc, { slugify, containerClass: "toc", listType: "ul" })
   .use(markdownItFootnote)
   .use(markdownItTaskLists, { enabled: true, label: true })
@@ -289,11 +286,7 @@ function findGroupIndex(pageGroups, el) {
 }
 
 function hFromEl(h) {
-  // With markdown-it-anchor's `headerLink` style, the title text lives inside
-  // `a.header-anchor > span`. Grab that span when present; fall back to the
-  // full textContent for other permalink styles (e.g. pilcrow).
-  const span = h.querySelector("a.header-anchor > span");
-  const text = (span ? span.textContent : h.textContent).replace(/¶/g, "").trim();
+  const text = h.textContent.replace(/¶/g, "").trim();
   return {
     level: parseInt(h.tagName.slice(1), 10),
     text,
