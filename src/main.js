@@ -13,11 +13,11 @@ import { scheduleRender, renderPreview } from "./preview.js";
 import { lint } from "./linter.js";
 import { initOutline, updateOutline, highlightCurrentHeading, toggleOutline } from "./outline.js";
 import { openFile, saveFile, saveFileAs, renameFile, basename, dirname, joinPath } from "./fileops.js";
+import { initTabs, openNewTab, openFileInTab, closeActiveTab, activateNext, activateByIndex,
+         getActiveTab, setActiveModified, setActivePath, hasUnsavedTabs } from "./tabs.js";
 
 // ── State ─────────────────────────────────────────────────────────────────────
 
-let currentPath = null;
-let modified = false;
 let previewVisible = true;
 let syncScroll = true;
 let lintDiags = [];
@@ -56,6 +56,10 @@ const editor = createEditor(editorWrap, "", onContentChange);
 
 function onContentChange(text) {
   setModified(true);
+  refreshFromContent(text);
+}
+
+function refreshFromContent(text) {
   scheduleRender(text, previewBody);
   syncDocSettingsFromDocument();
   scheduleLint(text);
@@ -204,44 +208,37 @@ document.getElementById("lint-panel-close").addEventListener("click", () => {
 // ── File title ────────────────────────────────────────────────────────────────
 
 function setModified(val) {
-  modified = val;
+  setActiveModified(val);
   modDot.classList.toggle("hidden", !val);
 }
 
 function setCurrentPath(path) {
-  currentPath = path;
-  fileNameEl.textContent = path ? basename(path) : "untitled.md";
-  document.title = `${fileNameEl.textContent} — Rustmark`;
+  setActivePath(path);
+  const name = path ? basename(path) : "untitled.md";
+  fileNameEl.textContent = name;
+  document.title = `${name} — Rustmark`;
+}
+
+function syncTitleFromActive() {
+  const tab = getActiveTab();
+  const name = tab ? tab.filename : "untitled.md";
+  fileNameEl.textContent = name;
+  document.title = `${name} — Rustmark`;
+  modDot.classList.toggle("hidden", !(tab && tab.modified));
 }
 
 // ── File operations ───────────────────────────────────────────────────────────
 
 async function cmdNew() {
-  if (modified && !confirmDiscard()) return;
-  setEditorContent(editor, "");
-  setCurrentPath(null);
-  setModified(false);
-  renderPreview("", previewBody);
-  updateStatusWords("");
-  updateStatusLines("");
-  runLint("");
-  updateOutline("");
+  openNewTab();
   editor.focus();
 }
 
 async function cmdOpen() {
-  if (modified && !confirmDiscard()) return;
   try {
     const result = await openFile();
     if (!result) return;
-    setEditorContent(editor, result.content);
-    setCurrentPath(result.path);
-    setModified(false);
-    renderPreview(result.content, previewBody);
-    updateStatusWords(result.content);
-    updateStatusLines(result.content);
-    runLint(result.content);
-    updateOutline(result.content);
+    openFileInTab(result.path, result.content);
     editor.focus();
   } catch (e) {
     alert(`Could not open file: ${e}`);
@@ -249,9 +246,11 @@ async function cmdOpen() {
 }
 
 async function cmdSave() {
-  if (!currentPath) return cmdSaveAs();
+  const tab = getActiveTab();
+  if (!tab) return;
+  if (!tab.path) return cmdSaveAs();
   try {
-    await saveFile(currentPath, getEditorContent(editor));
+    await saveFile(tab.path, getEditorContent(editor));
     setModified(false);
   } catch (e) {
     alert(`Could not save: ${e}`);
@@ -259,8 +258,10 @@ async function cmdSave() {
 }
 
 async function cmdSaveAs() {
+  const tab = getActiveTab();
+  if (!tab) return;
   try {
-    const path = await saveFileAs(currentPath, getEditorContent(editor));
+    const path = await saveFileAs(tab.path, getEditorContent(editor));
     if (!path) return;
     setCurrentPath(path);
     setModified(false);
@@ -270,23 +271,20 @@ async function cmdSaveAs() {
 }
 
 async function cmdRename() {
-  if (!currentPath) { alert("Save the file first before renaming."); return; }
-  const oldName = basename(currentPath);
+  const tab = getActiveTab();
+  if (!tab || !tab.path) { alert("Save the file first before renaming."); return; }
+  const oldName = basename(tab.path);
   const newName = prompt("New filename:", oldName);
   if (!newName || newName === oldName) return;
-  const newPath = joinPath(dirname(currentPath), newName);
+  const newPath = joinPath(dirname(tab.path), newName);
   try {
-    await saveFile(currentPath, getEditorContent(editor));
-    await renameFile(currentPath, newPath);
+    await saveFile(tab.path, getEditorContent(editor));
+    await renameFile(tab.path, newPath);
     setCurrentPath(newPath);
     setModified(false);
   } catch (e) {
     alert(`Could not rename: ${e}`);
   }
-}
-
-function confirmDiscard() {
-  return confirm("You have unsaved changes. Discard them?");
 }
 
 // ── Export modal ──────────────────────────────────────────────────────────────
@@ -510,10 +508,17 @@ document.addEventListener("keydown", e => {
   }
 
   if (!ctrl) return;
+  // Tab navigation: Ctrl/Cmd+Tab, Ctrl/Cmd+Shift+Tab (Tab key name is "Tab")
+  if (e.key === "Tab") {
+    e.preventDefault();
+    activateNext(e.shiftKey ? -1 : 1);
+    return;
+  }
   switch (e.key) {
     case "n": e.preventDefault(); cmdNew(); break;
     case "o": e.preventDefault(); cmdOpen(); break;
     case "s": e.preventDefault(); e.shiftKey ? cmdSaveAs() : cmdSave(); break;
+    case "w": e.preventDefault(); closeActiveTab(); break;
     case "t": e.preventDefault(); openTableCreator(); break;
     case "E": e.preventDefault(); openExportModal(); break;
     case "D": e.preventDefault(); openDocSettings(); break;
@@ -529,6 +534,20 @@ document.addEventListener("keydown", e => {
       togglePreview.dispatchEvent(new Event("change"));
       break;
   }
+});
+
+// Alt+1..9 switches to the tab at that index.
+document.addEventListener("keydown", e => {
+  if (!e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+  if (e.key >= "1" && e.key <= "9") {
+    e.preventDefault();
+    activateByIndex(+e.key - 1);
+  }
+});
+
+// Warn on window close if any tab has unsaved changes.
+window.addEventListener("beforeunload", e => {
+  if (hasUnsavedTabs()) { e.preventDefault(); e.returnValue = ""; }
 });
 
 // ── Draggable gutter ──────────────────────────────────────────────────────────
@@ -587,12 +606,24 @@ previewScroll.addEventListener("scroll", () => {
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 
-setCurrentPath(null);
-updateStatusWords("");
-updateStatusLines("");
 editor.focus();
 
 initSpellCheck().then(() => runInitialSpellCheck(editor));
+
+// ── Preview auto-fit ──────────────────────────────────────────────────────────
+// The paged preview uses fixed 8.5in (~816px) pages; auto-scale them to fill
+// the available pane width so we don't waste horizontal space.
+
+function updatePreviewZoom() {
+  const avail = previewScroll.clientWidth - 48; // padding + scrollbar
+  if (avail <= 0) return;
+  const pageW = 8.5 * 96;
+  const zoom = Math.max(0.6, Math.min(avail / pageW, 1.75));
+  previewBody.style.zoom = zoom.toFixed(3);
+}
+
+new ResizeObserver(updatePreviewZoom).observe(previewScroll);
+updatePreviewZoom();
 
 initDocSettings(
   () => getEditorContent(editor),
@@ -630,3 +661,16 @@ initTableCreator(markdown => {
   editor.dispatch({ changes: { from, to, insert } });
   editor.focus();
 });
+
+// Tabs — init after all other subsystems so the first-activation callback
+// can safely invoke preview/lint/outline/doc-settings/spellcheck.
+initTabs({
+  editor,
+  onActivate: (_tab, text) => {
+    syncTitleFromActive();
+    refreshFromContent(text);
+    runInitialSpellCheck(editor);
+    editor.focus();
+  },
+});
+openNewTab();

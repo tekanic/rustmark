@@ -16,6 +16,9 @@ export default defineConfig({
     target: ["es2021", "chrome100", "safari13"],
     minify: !process.env.TAURI_ENV_DEBUG ? "esbuild" : false,
     sourcemap: !!process.env.TAURI_ENV_DEBUG,
+    // hljs (200 language grammars) and codemirror each exceed Vite's 500kB
+    // default; the warning isn't meaningful for a locally-loaded desktop app.
+    chunkSizeWarningLimit: 1000,
     // Split the heavy vendor libraries into their own chunks. Each of these
     // is independently large (CodeMirror, markdown-it ecosystem, KaTeX,
     // highlight.js); bundling them together trips Vite's 500kB warning and

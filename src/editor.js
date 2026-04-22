@@ -182,8 +182,10 @@ const extraKeymap = [
   { key: "Ctrl-Shift-k", mac: "Cmd-Shift-k", run: deleteLine },
 ];
 
-export function createEditor(container, initialDoc, onChange) {
-  const extensions = [
+let suppressOnChange = false;
+
+function buildExtensions(onChange) {
+  return [
     history(),
     lineNumbers(),
     highlightActiveLineGutter(),
@@ -208,13 +210,27 @@ export function createEditor(container, initialDoc, onChange) {
       ...completionKeymap,
     ]),
     EditorView.updateListener.of(update => {
+      if (suppressOnChange) return;
       if (update.docChanged) onChange(update.state.doc.toString());
     }),
   ];
+}
 
-  const state = EditorState.create({ doc: initialDoc, extensions });
+export function createEditor(container, initialDoc, onChange) {
+  const state = EditorState.create({ doc: initialDoc, extensions: buildExtensions(onChange) });
   const view = new EditorView({ state, parent: container });
+  view._onChange = onChange;
   return view;
+}
+
+export function createEditorStateFor(view, initialDoc) {
+  return EditorState.create({ doc: initialDoc, extensions: buildExtensions(view._onChange) });
+}
+
+export function swapEditorState(view, state) {
+  suppressOnChange = true;
+  try { view.setState(state); }
+  finally { suppressOnChange = false; }
 }
 
 export function setEditorContent(view, content) {

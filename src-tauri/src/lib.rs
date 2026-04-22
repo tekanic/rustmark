@@ -158,19 +158,20 @@ fn yaml_str(content: &str, key: &str) -> Option<String> {
 // ── Per-platform font stacks ──────────────────────────────────────────────────
 // Every OS ships a different set of "always installed" fonts. We pick a
 // theme-appropriate triple (serif / sans / mono) from each platform's
-// native set plus a platform-native color emoji font. This keeps PDF
-// output visually consistent with each OS's conventions and avoids hard
-// dependencies on Apple-only fonts like Helvetica Neue / Apple Color Emoji.
+// native set. This keeps PDF output visually consistent with each OS's
+// conventions and avoids hard dependencies on Apple-only fonts like
+// Helvetica Neue.
 //
 // These choices target fonts that are "always present" on a default OS
-// install — no extra install step for the user.
+// install — no extra install step for the user. Color emoji is handled
+// separately by the Chrome PDF export path (XeTeX/LuaTeX can't load
+// color bitmap fonts), so no emoji entry here.
 struct PlatformFonts {
     serif:    &'static str,  // e.g. Times New Roman / DejaVu Serif
     sans:     &'static str,  // e.g. Helvetica Neue / Segoe UI / DejaVu Sans
     mono:     &'static str,  // e.g. Menlo / Consolas / DejaVu Sans Mono
     mono_alt: &'static str,  // typewriter variant (Courier-family)
     serif_alt:&'static str,  // alternate serif (Georgia-family)
-    emoji:    &'static str,  // color emoji font
 }
 
 fn platform_fonts() -> PlatformFonts {
@@ -181,7 +182,6 @@ fn platform_fonts() -> PlatformFonts {
         mono:      "Menlo",
         mono_alt:  "Courier New",
         serif_alt: "Georgia",
-        emoji:     "Apple Color Emoji",
     } }
     #[cfg(target_os = "windows")]
     { PlatformFonts {
@@ -190,19 +190,16 @@ fn platform_fonts() -> PlatformFonts {
         mono:      "Consolas",
         mono_alt:  "Courier New",
         serif_alt: "Georgia",
-        emoji:     "Segoe UI Emoji",
     } }
     #[cfg(all(not(target_os = "macos"), not(target_os = "windows")))]
     { PlatformFonts {
         // DejaVu is the near-universal Linux fallback (bundled with most
-        // distros and pulled in by Tectonic's own package set). Noto Color
-        // Emoji is the standard open-source color emoji font.
+        // distros and pulled in by Tectonic's own package set).
         serif:     "DejaVu Serif",
         sans:      "DejaVu Sans",
         mono:      "DejaVu Sans Mono",
         mono_alt:  "DejaVu Sans Mono",
         serif_alt: "DejaVu Serif",
-        emoji:     "Noto Color Emoji",
     } }
 }
 

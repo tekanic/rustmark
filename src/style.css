@@ -167,6 +167,90 @@ html, body, #app {
 #modified-dot { color: var(--warn); }
 .hidden { display: none !important; }
 
+/* ── Tab bar ───────────────────────────────────────────────────────────────── */
+#tab-bar {
+  display: flex;
+  align-items: stretch;
+  background: var(--toolbar-bg);
+  border-bottom: 1px solid var(--border);
+  height: 32px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+#tab-bar-list {
+  display: flex;
+  flex: 1;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+}
+#tab-bar-list::-webkit-scrollbar { height: 3px; }
+#tab-bar-list::-webkit-scrollbar-thumb { background: var(--border); }
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px 0 12px;
+  min-width: 100px;
+  max-width: 220px;
+  height: 100%;
+  font-size: 12px;
+  color: var(--text-muted);
+  background: var(--toolbar-bg);
+  border-right: 1px solid var(--border);
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+  white-space: nowrap;
+}
+.tab:hover { background: var(--btn-bg); color: var(--text); }
+.tab.active {
+  background: var(--panel-bg);
+  color: var(--text);
+}
+.tab.active::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 2px;
+  background: var(--accent);
+}
+.tab-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tab-dot {
+  color: var(--warn);
+  font-size: 10px;
+  flex-shrink: 0;
+}
+.tab-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 11px;
+  padding: 2px 4px;
+  border-radius: 3px;
+  line-height: 1;
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+.tab-close:hover { background: var(--btn-hover); color: var(--text); opacity: 1; }
+.tab.active .tab-close { opacity: 1; }
+#tab-new-btn {
+  background: none;
+  border: none;
+  border-left: 1px solid var(--border);
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0 12px;
+  flex-shrink: 0;
+}
+#tab-new-btn:hover { background: var(--btn-bg); color: var(--text); }
+
 /* ── Editor pane ───────────────────────────────────────────────────────────── */
 #editor-pane {
   flex: 1;
@@ -635,8 +719,8 @@ html, body, #app {
   line-height: 1.25;
   color: var(--md-fg);
 }
-.markdown-body h1 { font-size: 2em;   padding-bottom: 0.3em; border-bottom: 1px solid var(--md-heading-border); }
-.markdown-body h2 { font-size: 1.5em; padding-bottom: 0.3em; border-bottom: 1px solid var(--md-heading-border); }
+.markdown-body h1 { font-size: 2em; }
+.markdown-body h2 { font-size: 1.5em; }
 .markdown-body h3 { font-size: 1.25em; }
 .markdown-body h4 { font-size: 1em; }
 .markdown-body h5 { font-size: 0.875em; }
@@ -1425,8 +1509,6 @@ html, body, #app {
   border: 1px solid #d0d7de !important;
 }
 .pg-body a { color: #0969da !important; }
-.pg-body h1,
-.pg-body h2 { border-bottom-color: #d0d7de !important; }
 
 /* Override the ancestor-selector hljs dark palette when inside a page, so
    syntax-highlighted code blocks stay readable on white paper.             */
@@ -1562,7 +1644,7 @@ html, body, #app {
 /* ── Print styles (PDF via print dialog) ─────────────────────────────────── */
 
 @media print {
-  #toolbar, #toolbar-format, #statusbar, #goto-bar,
+  #toolbar, #toolbar-format, #tab-bar, #statusbar, #goto-bar,
   #editor-pane, #gutter,
   #outline-pane, #outline-gutter,
   #lint-panel, #lint-detail,
@@ -1583,6 +1665,7 @@ html, body, #app {
   #preview-body.preview-paged {
     background: #fff !important;
     padding: 0 !important;
+    zoom: 1 !important;
   }
 
   /* Canonical paged-media layout for window.print() → PDF.
