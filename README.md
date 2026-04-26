@@ -85,4 +85,22 @@ assets/           — logo + animated README graphics
 
 ## License
 
-MIT.
+rustmark is licensed under the [GNU General Public License v3.0](./LICENSE.md).
+
+In short:
+
+- **You can** use rustmark for any purpose, including commercial use.
+- **You can** modify rustmark and distribute your modifications.
+- **You must** release the source code of any distributed modifications under
+  GPL v3.
+- **You must** preserve copyright and license notices.
+- Any larger work that incorporates rustmark's source code generally must also
+  be licensed under GPL v3.
+
+See the [GPL v3 FAQ](https://www.gnu.org/licenses/gpl-faq.html) for details.
+
+### Contributing
+
+By submitting a contribution to this project, you agree that your contribution
+is licensed under the GPL v3. No separate Contributor License Agreement is
+required.
